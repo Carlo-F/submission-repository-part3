@@ -15,4 +15,5 @@ Deployed application available at [link](https://ancient-caverns-47626.herokuapp
 - [x] 3.8 Phonebook backend step8
 - [x] 3.9 Phonebook backend step9
 - [x] 3.10 Phonebook backend step10
-- [ ] 3.11 Phonebook backend step11
+- [x] 3.11 Phonebook backend step11
+- [x] 3.12 Command-line database
