@@ -4,6 +4,7 @@ const app = express()
 const morgan = require('morgan')
 const cors = require('cors')
 const Person = require('./models/person')
+const person = require('./models/person')
 
 morgan.token('body', (req, res) => {
   if(req.method == 'POST') {
@@ -13,6 +14,7 @@ morgan.token('body', (req, res) => {
   }
 })
 
+app.use(express.static('build'))
 app.use(express.json())
 app.use(morgan(function (tokens, req, res) {
   return [
@@ -25,7 +27,6 @@ app.use(morgan(function (tokens, req, res) {
   ].join(' ')
 }))
 app.use(cors())
-app.use(express.static('build'))
 
 let persons = []
 
@@ -62,15 +63,34 @@ app.post('/api/persons', (request, response) => {
   })
 })
 
-app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = persons.find(person => person.id == id)
+app.get('/api/persons/:id', (request, response, next) => {
+  
+  person.findById(request.params.id)
+    .then(person => {
+      if (person) {   
+          response.json(person)
+      } else {
+          response.status(404).end()
+      }
+    })
+    .catch(error => next(error))
 
-    if (person) {   
-        response.json(person)
-    } else {
-        response.status(404).end()
-    }
+
+})
+
+app.put('/api/persons/:id', (request, response, next) => {
+  const body = request.body
+
+  const person = {
+    name: body.name,
+    number: body.number
+  }
+
+  Person.findByIdAndUpdate(request.params.id, person, {new: true})
+    .then(updatedPerson => {
+      response.json(updatedPerson)
+    })
+    .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
@@ -81,16 +101,31 @@ app.delete('/api/persons/:id', (request, response, next) => {
   .catch(error => next(error))
 })
 
-app.get('/info', (request, response) => {
-const date = new Date()
-    response.write(`<p>Phonebook has info for ${persons.length} people</p>`)
-    response.write(date.toISOString())
-    response.end()
+app.get('/info', (request, response, next) => {
+  const date = new Date()
+
+  person.count()
+    .then(result => {
+      response.write(`<p>Phonebook has info for ${result} people</p>`)
+      response.write(date.toISOString())
+      response.end()
+    })
+    .catch(error => next(error))
 
 })
 
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
+
 const errorHandler = (error, request, response, next) => {
   console.log(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  }
 
   next(error)
   
