@@ -23,3 +23,6 @@ Deployed application available at [link](https://ancient-caverns-47626.herokuapp
 - [x] 3.16 Phonebook database step4
 - [x] 3.17 Phonebook database step5
 - [x] 3.18 Phonebook database step6
+- [x] 3.19 Phonebook database step7
+- [ ] 3.20 Phonebook database step8
+- [ ] 3.21 Deploying the database backend to production
