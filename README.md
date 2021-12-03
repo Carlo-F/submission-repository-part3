@@ -26,3 +26,4 @@ Deployed application available at [link](https://ancient-caverns-47626.herokuapp
 - [x] 3.19 Phonebook database step7
 - [x] 3.20 Phonebook database step8
 - [x] 3.21 Deploying the database backend to production
+- [x] 3.22 Lint configuration
